@@ -1,14 +1,29 @@
 #include "Arduino.h"
 #include "MorseParse.h"
 
-MorseParse::MorseParse(int button_pin, int led_pin){
-  pinMode(button_pin,INPUT_PULLUP);
+MorseParse::MorseParse(int button_pin_in, int button_pin_out, int led_pin){
+  pinMode(button_pin_in,INPUT_PULLUP);
   pinMode(led_pin, OUTPUT);
+  pinMode(button_pin_out,OUTPUT);
 
   digitalWrite(led_pin,LOW);
 
-  p_buttonPin = button_pin;
+  p_buttonPinIn = button_pin_in;
+  p_buttonPinOut = button_pin_out;
   p_ledPin = led_pin;
+  p_clockTime = 0;
+  p_newClockTime = 0;
+  p_buttonOnTime = 0;
+  p_buttonOffTime = 0;
+  p_newLEDCycle = false;
+  symbolIndex = 0;
+}
+
+MorseParse::MorseParse(int rx_pin){
+  pinMode(rx_pin,INPUT_PULLUP);
+
+  p_buttonPinIn = rx_pin;
+  p_buttonPinOut = 0;
   p_clockTime = 0;
   p_newClockTime = 0;
   p_buttonOnTime = 0;
@@ -19,9 +34,11 @@ MorseParse::MorseParse(int button_pin, int led_pin){
 
 char MorseParse::Update(){
   char m_returnLetter = 0x00;
-  if(digitalRead(p_buttonPin) == LOW) {
-    p_buttonOnTime++;
+  if(digitalRead(p_buttonPinIn) == LOW) {
+   digitalWrite(p_buttonPinOut,LOW);
+   p_buttonOnTime++;
   } else {
+    digitalWrite(p_buttonPinOut,HIGH);
     p_buttonOffTime++;
   }
 

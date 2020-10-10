@@ -5,7 +5,8 @@
 class MorseParse
 {
   public:
-    MorseParse(int button_pin, int led_pin);
+    MorseParse(int button_pin_in, int button_pin_out, int led_pin);
+    MorseParse(int rx_pin);
     char Update();
 
     int clockPeriod = 1000;
@@ -16,7 +17,8 @@ class MorseParse
 
 
   private:
-    int p_buttonPin;
+    int p_buttonPinOut;
+    int p_buttonPinIn;
     int p_ledPin;
     int p_clockTime;
     int p_newClockTime;
