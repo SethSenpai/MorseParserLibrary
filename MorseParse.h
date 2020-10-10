@@ -14,6 +14,7 @@ class MorseParse
     void SetClockPeriod(int period);
     void SetDashThreshold(float threshold);
 
+
   private:
     int p_buttonPin;
     int p_ledPin;
@@ -22,6 +23,18 @@ class MorseParse
     int p_buttonOnTime;
     int p_buttonOffTime;
     bool p_newLEDCycle;
+
+    const static int SYMBOL_DEPTH = 5;
+    typedef enum symbol {
+      DOT,
+      DASH
+    };
+
+    symbol symbols[SYMBOL_DEPTH];
+    int symbolIndex;
+
+    char parseMorseCharacter(symbol p_symbols[], int p_symbolIndex);
+    bool compareSymbolArray(symbol p_a[], symbol p_b[], int p_sizeA, int p_sizeB);
 };
 
 #endif
