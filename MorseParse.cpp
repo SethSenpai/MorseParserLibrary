@@ -32,16 +32,18 @@ MorseParse::MorseParse(int rx_pin){
   symbolIndex = 0;
 }
 
-char MorseParse::Update(){
-  char m_returnLetter = 0x00;
+void MorseParse::Update(){
   if(digitalRead(p_buttonPinIn) == LOW) {
-   digitalWrite(p_buttonPinOut,LOW);
-   p_buttonOnTime++;
+    digitalWrite(p_buttonPinOut,LOW);
+    p_buttonOnTime++;
   } else {
     digitalWrite(p_buttonPinOut,HIGH);
     p_buttonOffTime++;
   }
+}
 
+char MorseParse::UpdateOnRisingEdge() {
+  char m_returnLetter = 0x00;
   // check every LED period to see what character we've gotten 
   if(p_newLEDCycle) {
     if(p_buttonOnTime == LOW) {
@@ -63,17 +65,39 @@ char MorseParse::Update(){
     p_buttonOnTime = 0;
     p_buttonOffTime = 0;
   }
-  
-  p_newClockTime = millis() % clockPeriod;
-  p_newLEDCycle = (p_newClockTime < p_clockTime);
-  p_clockTime = p_newClockTime;  
-  digitalWrite(p_ledPin, ((p_clockTime > clockPeriod/10) && p_clockTime < ((clockPeriod/10) + clockPeriod * .1) ));
+
   return m_returnLetter;
 }
 
-void MorseParse::SetClockPeriod(int period){
-  clockPeriod = period;
+void MorseParse::updateLED() {
+  ledState = !ledState;
+  if(p_ledPin != 0) {
+    digitalWrite(p_ledPin, ledState);
+  }
 }
+   
+//   if(isMasterDevice) { 
+//     p_newClockTime = millis() % clockPeriod;
+//     p_newLEDCycle = (p_newClockTime < p_clockTime);
+//     digitalWrite(clockPin, (millis() % clockPeriod) > clockPeriod/2);
+//     p_clockTime = p_newClockTime;
+//   } else {
+//     newClockState = digitalRead(clockPin); 
+//     p_newLEDCycle = (newClockState == true && clockState == false); // rising edge of clock
+//     clockState = newClockState;
+//   }
+//   
+//   // digitalWrite(p_ledPin, ((p_clockTime > clockPeriod/10) && p_clockTime < ((clockPeriod/10) + clockPeriod * .1) ));
+//   
+//   if(p_newLEDCycle) {
+//     ledState = !ledState;
+//   }
+//   digitalWrite(p_ledPin, ledState);
+// }
+
+// void MorseParse::SetClockPeriod(int period){
+//   clockPeriod = period;
+// }
 
 void MorseParse::SetDashThreshold(float threshold){
   dashThreshold = threshold;

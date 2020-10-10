@@ -7,14 +7,17 @@ class MorseParse
   public:
     MorseParse(int button_pin_in, int button_pin_out, int led_pin);
     MorseParse(int rx_pin);
-    char Update();
 
-    int clockPeriod = 1000;
+    void Update();
+    char UpdateOnRisingEdge();
+
+    // int clockPeriod = 1000;
     float dashThreshold = .3;
 
-    void SetClockPeriod(int period);
+    // void SetClockPeriod(int period);
     void SetDashThreshold(float threshold);
 
+    void updateLED();
 
   private:
     int p_buttonPinOut;
@@ -25,6 +28,11 @@ class MorseParse
     int p_buttonOnTime;
     int p_buttonOffTime;
     bool p_newLEDCycle;
+
+    bool newClockState; // high or low
+    bool clockState;
+    bool ledState;
+    int clockPin;
 
     const static int SYMBOL_DEPTH = 5;
     typedef enum symbol {
