@@ -117,7 +117,21 @@ char MorseParse::parseMorseCharacter(symbol p_symbols[], int p_symbolIndex) {
   symbol x[] = {DASH, DOT, DOT, DASH};
   symbol y[] = {DASH, DOT, DASH, DASH};
   symbol z[] = {DASH, DASH, DOT, DOT};
-  symbol space[] = {DOT,DOT,DOT,DOT,DOT};
+  symbol one[] = {DOT, DASH, DASH, DASH, DASH};
+  symbol two[] = {DOT, DOT, DASH, DASH, DASH};
+  symbol three[] = {DOT, DOT, DOT, DASH, DASH};
+  symbol four[] = {DOT, DOT, DOT, DOT, DASH};
+  symbol five[] = {DOT, DOT, DOT, DOT, DOT};
+  symbol six[] = {DASH, DOT, DOT, DOT, DOT};
+  symbol seven[] = {DASH, DASH, DOT, DOT, DOT};
+  symbol eight[] = {DASH, DASH, DASH, DOT, DOT};
+  symbol nine[] = {DASH, DASH, DASH, DASH, DOT};
+  symbol zero[] = {DASH, DASH, DASH, DASH, DASH};
+  symbol dot[] = {DOT, DASH, DOT, DASH, DOT, DASH};
+  symbol comma[] = {DASH, DASH, DOT, DOT, DASH, DASH};
+  symbol question[] = {DOT, DOT, DASH, DASH, DOT, DOT};
+  symbol slash[] = {DASH, DOT, DOT, DASH, DOT};
+  symbol space[] = {DOT, DASH, DASH, DOT, DASH, DOT};
   
   if(compareSymbolArray(character, a, symbolIndex, sizeof(a)/sizeof(a[0]))) return 'a';
   if(compareSymbolArray(character, b, symbolIndex, sizeof(b)/sizeof(a[0]))) return 'b';
@@ -145,6 +159,20 @@ char MorseParse::parseMorseCharacter(symbol p_symbols[], int p_symbolIndex) {
   if(compareSymbolArray(character, x, symbolIndex, sizeof(x)/sizeof(a[0]))) return 'x';
   if(compareSymbolArray(character, y, symbolIndex, sizeof(y)/sizeof(a[0]))) return 'y';
   if(compareSymbolArray(character, z, symbolIndex, sizeof(z)/sizeof(a[0]))) return 'z';
+  if(compareSymbolArray(character, one, symbolIndex, sizeof(one)/sizeof(a[0]))) return '1';
+  if(compareSymbolArray(character, two, symbolIndex, sizeof(two)/sizeof(a[0]))) return '2';
+  if(compareSymbolArray(character, three, symbolIndex, sizeof(three)/sizeof(a[0]))) return '3';
+  if(compareSymbolArray(character, four, symbolIndex, sizeof(four)/sizeof(a[0]))) return '4';
+  if(compareSymbolArray(character, five, symbolIndex, sizeof(five)/sizeof(a[0]))) return '5';
+  if(compareSymbolArray(character, six, symbolIndex, sizeof(six)/sizeof(a[0]))) return '6';
+  if(compareSymbolArray(character, seven, symbolIndex, sizeof(seven)/sizeof(a[0]))) return '7';
+  if(compareSymbolArray(character, eight, symbolIndex, sizeof(eight)/sizeof(a[0]))) return '8';
+  if(compareSymbolArray(character, nine, symbolIndex, sizeof(nine)/sizeof(a[0]))) return '9';
+  if(compareSymbolArray(character, zero, symbolIndex, sizeof(zero)/sizeof(a[0]))) return '0';
+  if(compareSymbolArray(character, dot, symbolIndex, sizeof(dot)/sizeof(a[0]))) return '.';
+  if(compareSymbolArray(character, comma, symbolIndex, sizeof(comma)/sizeof(a[0]))) return ',';
+  if(compareSymbolArray(character, question, symbolIndex, sizeof(question)/sizeof(a[0]))) return '?';
+  if(compareSymbolArray(character, slash, symbolIndex, sizeof(slash)/sizeof(a[0]))) return '/';
   if(compareSymbolArray(character, space, symbolIndex, sizeof(space)/sizeof(a[0]))) return ' ';
   
   return 0x00;

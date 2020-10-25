@@ -23,7 +23,7 @@ class MorseParse
     int dotSamples;
     int waitSamples;
 
-    const static int SYMBOL_DEPTH = 5;
+    const static int SYMBOL_DEPTH = 6;
     typedef enum symbol {
       DOT,
       DASH
