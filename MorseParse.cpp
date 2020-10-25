@@ -39,6 +39,8 @@ char MorseParse::Update() {
   char t_returnLetter = 0x00;
   if(millis() > timeChecker + sampleFrameTime) {
     digitalWrite(p_ledPin,HIGH);
+    int mirror = digitalRead(p_buttonPinIn);
+    digitalWrite(p_buttonPinOut,mirror);
     if(digitalRead(p_buttonPinIn) == LOW) {
       wasPressing = true;
       sampleCount ++;
