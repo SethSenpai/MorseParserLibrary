@@ -30,8 +30,8 @@ void MorseParse::initializeVariables() {
   wasPressing = false;
   timeChecker = 0;
   sampleFrameTime = 50;
-  dotSamples = 8;
-  waitSamples = 20;
+  dotSamples = 4;
+  waitSamples = 6;
 }
 
 char MorseParse::Update() {
@@ -81,7 +81,7 @@ char MorseParse::Update() {
 
 void MorseParse::setDotSamples(int samples){
   dotSamples = samples;
-  waitSamples = 3 * samples;
+  waitSamples = samples + 2;
 }
 
 char MorseParse::parseMorseCharacter(symbol p_symbols[], int p_symbolIndex) {
@@ -131,7 +131,9 @@ char MorseParse::parseMorseCharacter(symbol p_symbols[], int p_symbolIndex) {
   symbol comma[] = {DASH, DASH, DOT, DOT, DASH, DASH};
   symbol question[] = {DOT, DOT, DASH, DASH, DOT, DOT};
   symbol slash[] = {DASH, DOT, DOT, DASH, DOT};
-  symbol space[] = {DOT, DASH, DASH, DOT, DASH, DOT};
+  symbol at[] = {DOT, DASH, DASH, DOT, DASH, DOT};
+  symbol space[] = {DOT,DOT,DOT,DOT,DOT,DOT};
+  symbol backspace[] = {DOT,DOT,DOT,DOT,DOT,DASH};
   
   if(compareSymbolArray(character, a, symbolIndex, sizeof(a)/sizeof(a[0]))) return 'a';
   if(compareSymbolArray(character, b, symbolIndex, sizeof(b)/sizeof(a[0]))) return 'b';
@@ -173,7 +175,9 @@ char MorseParse::parseMorseCharacter(symbol p_symbols[], int p_symbolIndex) {
   if(compareSymbolArray(character, comma, symbolIndex, sizeof(comma)/sizeof(a[0]))) return ',';
   if(compareSymbolArray(character, question, symbolIndex, sizeof(question)/sizeof(a[0]))) return '?';
   if(compareSymbolArray(character, slash, symbolIndex, sizeof(slash)/sizeof(a[0]))) return '/';
+  if(compareSymbolArray(character, at, symbolIndex, sizeof(at)/sizeof(a[0]))) return '@';
   if(compareSymbolArray(character, space, symbolIndex, sizeof(space)/sizeof(a[0]))) return ' ';
+  if(compareSymbolArray(character, backspace, symbolIndex, sizeof(backspace)/sizeof(a[0]))) return 0x08;
   
   return 0x00;
 }
