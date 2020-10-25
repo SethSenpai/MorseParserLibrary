@@ -3,7 +3,10 @@
 
 Note we don't do the character space/word space thing.
 
-Also we've replaced the '@' symbol with a space.
+Space character is ``. . . . . .``
+Backspace character is ``. . . . . -``
+
+Note that backspace implementation is device specific. The library will only return the ascii backspace character (0x08). This may or may not be printed depending on the implementation of your display or monitor.
 
 # Example Code:
 ```cpp
