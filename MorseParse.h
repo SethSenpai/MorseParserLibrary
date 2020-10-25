@@ -20,6 +20,9 @@ class MorseParse
     long timeChecker;
     int sampleFrameTime;
 
+    int dotSamples;
+    int waitSamples;
+
     const static int SYMBOL_DEPTH = 5;
     typedef enum symbol {
       DOT,
@@ -32,6 +35,7 @@ class MorseParse
     void initializeVariables();
     char parseMorseCharacter(symbol p_symbols[], int p_symbolIndex);
     bool compareSymbolArray(symbol p_a[], symbol p_b[], int p_sizeA, int p_sizeB);
+    void MorseParse::setDotSamples(int samples);
 };
 
 #endif

@@ -29,13 +29,16 @@ void MorseParse::initializeVariables() {
   silenceCount = 0;
   wasPressing = false;
   timeChecker = 0;
-  sampleFrameTime = 200;
+  sampleFrameTime = 50;
+  dotSamples = 8;
+  waitSamples = 20;
 }
 
 char MorseParse::Update() {
   // Burn cpu cycles!
   char t_returnLetter = 0x00;
   if(millis() > timeChecker + sampleFrameTime) {
+    digitalWrite(p_ledPin,HIGH);
     if(digitalRead(p_buttonPinIn) == LOW) {
       wasPressing = true;
       sampleCount ++;
@@ -44,19 +47,21 @@ char MorseParse::Update() {
     else
     {
       if(sampleCount > 0) {
-        if(sampleCount > 2) {
+        if(sampleCount > dotSamples) {
           Serial.print("-");
+          digitalWrite(p_ledPin,LOW);
           symbols[symbolIndex] = DASH;
           symbolIndex++;
         }
-        if(sampleCount < 2) {
+        if(sampleCount <= dotSamples) {
           Serial.print(".");
+          digitalWrite(p_ledPin,LOW);
           symbols[symbolIndex] = DOT;
           symbolIndex++;
         }
         sampleCount = 0;
       }
-      if(silenceCount > 5 && wasPressing == true) {
+      if(silenceCount > waitSamples && wasPressing == true) {
         Serial.println(" ");
 
         t_returnLetter = parseMorseCharacter(symbols, symbolIndex);
@@ -70,6 +75,11 @@ char MorseParse::Update() {
     timeChecker = millis();
   }
   return t_returnLetter;
+}
+
+void MorseParse::setDotSamples(int samples){
+  dotSamples = samples;
+  waitSamples = 3 * samples;
 }
 
 char MorseParse::parseMorseCharacter(symbol p_symbols[], int p_symbolIndex) {
@@ -105,6 +115,7 @@ char MorseParse::parseMorseCharacter(symbol p_symbols[], int p_symbolIndex) {
   symbol x[] = {DASH, DOT, DOT, DASH};
   symbol y[] = {DASH, DOT, DASH, DASH};
   symbol z[] = {DASH, DASH, DOT, DOT};
+  symbol space[] = {DOT,DOT,DOT,DOT,DOT};
   
   if(compareSymbolArray(character, a, symbolIndex, sizeof(a)/sizeof(a[0]))) return 'a';
   if(compareSymbolArray(character, b, symbolIndex, sizeof(b)/sizeof(a[0]))) return 'b';
@@ -132,7 +143,8 @@ char MorseParse::parseMorseCharacter(symbol p_symbols[], int p_symbolIndex) {
   if(compareSymbolArray(character, x, symbolIndex, sizeof(x)/sizeof(a[0]))) return 'x';
   if(compareSymbolArray(character, y, symbolIndex, sizeof(y)/sizeof(a[0]))) return 'y';
   if(compareSymbolArray(character, z, symbolIndex, sizeof(z)/sizeof(a[0]))) return 'z';
-
+  if(compareSymbolArray(character, space, symbolIndex, sizeof(space)/sizeof(a[0]))) return ' ';
+  
   return 0x00;
 }
 
