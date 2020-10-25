@@ -11,96 +11,65 @@ MorseParse::MorseParse(int button_pin_in, int button_pin_out, int led_pin){
   p_buttonPinIn = button_pin_in;
   p_buttonPinOut = button_pin_out;
   p_ledPin = led_pin;
-  p_clockTime = 0;
-  p_newClockTime = 0;
-  p_buttonOnTime = 0;
-  p_buttonOffTime = 0;
-  p_newLEDCycle = false;
-  symbolIndex = 0;
+
+  initializeVariables();
 }
 
 MorseParse::MorseParse(int rx_pin){
   pinMode(rx_pin,INPUT_PULLUP);
 
   p_buttonPinIn = rx_pin;
-  p_buttonPinOut = 0;
-  p_clockTime = 0;
-  p_newClockTime = 0;
-  p_buttonOnTime = 0;
-  p_buttonOffTime = 0;
-  p_newLEDCycle = false;
+
+  initializeVariables();
+}
+
+void MorseParse::initializeVariables() {
   symbolIndex = 0;
+  sampleCount = 0;
+  silenceCount = 0;
+  wasPressing = false;
+  timeChecker = 0;
+  sampleFrameTime = 200;
 }
 
-void MorseParse::Update(){
-  if(digitalRead(p_buttonPinIn) == LOW) {
-    digitalWrite(p_buttonPinOut,LOW);
-    p_buttonOnTime++;
-  } else {
-    digitalWrite(p_buttonPinOut,HIGH);
-    p_buttonOffTime++;
-  }
-}
-
-char MorseParse::UpdateOnRisingEdge() {
-  char m_returnLetter = 0x00;
-  // check every LED period to see what character we've gotten 
-  if(p_newLEDCycle) {
-    if(p_buttonOnTime == LOW) {
-      m_returnLetter = parseMorseCharacter(symbols, symbolIndex);
-      symbolIndex = 0;
-    } else if(p_buttonOnTime < (p_buttonOnTime + p_buttonOffTime) * dashThreshold) {
-      // dot
-      // m_returnLetter = '.';
-      symbols[symbolIndex] = DOT;
-      symbolIndex++;
-
-    } else {
-      // dash
-      // m_returnLetter = '-';
-      symbols[symbolIndex] = DASH;
-      symbolIndex++;
+char MorseParse::Update() {
+  // Burn cpu cycles!
+  char t_returnLetter = 0x00;
+  if(millis() > timeChecker + sampleFrameTime) {
+    if(digitalRead(p_buttonPinIn) == LOW) {
+      wasPressing = true;
+      sampleCount ++;
+      silenceCount = 0;
     }
-    
-    p_buttonOnTime = 0;
-    p_buttonOffTime = 0;
+    else
+    {
+      if(sampleCount > 0) {
+        if(sampleCount > 2) {
+          Serial.print("-");
+          symbols[symbolIndex] = DASH;
+          symbolIndex++;
+        }
+        if(sampleCount < 2) {
+          Serial.print(".");
+          symbols[symbolIndex] = DOT;
+          symbolIndex++;
+        }
+        sampleCount = 0;
+      }
+      if(silenceCount > 5 && wasPressing == true) {
+        Serial.println(" ");
+
+        t_returnLetter = parseMorseCharacter(symbols, symbolIndex);
+        symbolIndex = 0;
+
+        silenceCount = 0;
+        wasPressing = false;
+      }
+      silenceCount ++;
+    }
+    timeChecker = millis();
   }
-
-  return m_returnLetter;
-}
-
-void MorseParse::updateLED() {
-  ledState = !ledState;
-  if(p_ledPin != 0) {
-    digitalWrite(p_ledPin, ledState);
-  }
-}
-   
-//   if(isMasterDevice) { 
-//     p_newClockTime = millis() % clockPeriod;
-//     p_newLEDCycle = (p_newClockTime < p_clockTime);
-//     digitalWrite(clockPin, (millis() % clockPeriod) > clockPeriod/2);
-//     p_clockTime = p_newClockTime;
-//   } else {
-//     newClockState = digitalRead(clockPin); 
-//     p_newLEDCycle = (newClockState == true && clockState == false); // rising edge of clock
-//     clockState = newClockState;
-//   }
-//   
-//   // digitalWrite(p_ledPin, ((p_clockTime > clockPeriod/10) && p_clockTime < ((clockPeriod/10) + clockPeriod * .1) ));
-//   
-//   if(p_newLEDCycle) {
-//     ledState = !ledState;
-//   }
-//   digitalWrite(p_ledPin, ledState);
-// }
-
-// void MorseParse::SetClockPeriod(int period){
-//   clockPeriod = period;
-// }
-
-void MorseParse::SetDashThreshold(float threshold){
-  dashThreshold = threshold;
+  return t_returnLetter;
 }
 
 char MorseParse::parseMorseCharacter(symbol p_symbols[], int p_symbolIndex) {
